@@ -2,8 +2,8 @@ var express = require('express');
 var router = express.Router();
 const User = require('../models/User');
 const bcrypt = require('bcrypt');
-const auth = require('../middlewares/auth');
-const generateToken = require('../middlewares/generateToken');
+const auth = require('../middleware/auth');
+const generateToken = require('../middleware/generateToken');
 
 // Create a new user
 router.post('/', async (req, res) => {
