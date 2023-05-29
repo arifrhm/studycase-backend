@@ -25,8 +25,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(indexRouter);
 
-// catch 404 and forward to error handler
-
+app.use(response);
 // error handler
 // catch 404 and forward to error handler
 app.use((req, res, next) => {
@@ -44,6 +43,5 @@ app.use((error, req, res, next) => {
   res.status(error.status || ERROR_SERVER).json({ message : error.message, code: error.code });
 });
 
-app.use(response)
 
 module.exports = app;
