@@ -2,6 +2,9 @@ const { NOT_AUTHENTICATED_CODE,GENERAL_ERROR_CODE } = require("../constant/error
 const { UNAUTHORIZED, ERROR_SERVER } = require("../constant/errorHttp");
 const { UN_AUTHENTICATED, GENERAL_ERROR_MESSAGE } = require("../constant/errorMessage");
 const User = require('../models/User');
+const bcrypt = require('bcrypt');
+const HttpError = require('../interface/httpError');
+const generateToken = require('../middleware/generateToken');
 
 const all = async (req, res, next) => {
     try {
@@ -82,26 +85,32 @@ const deleteByID = async (req, res, next) => {
 }
 
 //Create genreate token endpoint
-const login = async function (req, res) {
+const login = async function (req, res, next) {
     try {
+        const { name,
+            email,
+            password,
+            isAdmin,
+        } = req.body;
+        
         // Check if user exists and password is correct
-        console.log('Menjalankan fungsi login');
-        const user = await User.findOne({ username: req.body.username });        
+        const user = await User.findOne({name: name, email: email });  
+        const validPassword = await bcrypt.compare(password, user.password);
+
         const errorUnauthenticated = new HttpError(UN_AUTHENTICATED, NOT_AUTHENTICATED_CODE, UNAUTHORIZED);
-        if (!user) {
+
+        if (!user||!validPassword) {
             next(errorUnauthenticated);
         }
-        //return res.status(400).json({ error: 'Invalid username or password' });
-        const validPassword = await bcrypt.compare(req.body.password, user.password);
-        if (!validPassword) {
-            next(errorUnauthenticated);
-        }
-        //return res.status(400).json({ error: 'Invalid username or password' });
-        // Generate JWT token and send back to client
         const token = generateToken(user);
-        req.data = token;
+        delete user.password;
+        req.data = {
+            user_email : user.email,
+            token : token
+        };
         next();
     } catch (err) {
+        console.log(err);
         const error = new HttpError(GENERAL_ERROR_MESSAGE, GENERAL_ERROR_CODE, ERROR_SERVER);
         next(error);
     }
