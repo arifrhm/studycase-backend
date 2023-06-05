@@ -5,8 +5,7 @@ const {NOT_AUTHENTICATED_CODE} = require('../constant/errorCode');
 const {UNAUTHORIZED} = require('../constant/errorHttp');
 
 function auth(req, res, next) {
-    console.log(req.header('Authorization'));
-    const token = req.header('Authorization');
+    const token = req.header('Authorization').split(' ')[1];
     const accessError = new HttpError(UNAUTHORIZED_USER, NOT_AUTHENTICATED_CODE, UNAUTHORIZED);
     if (!token) {
         console.log(accessError);
