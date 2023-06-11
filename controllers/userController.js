@@ -4,7 +4,7 @@ const { UN_AUTHENTICATED, GENERAL_ERROR_MESSAGE } = require("../constant/errorMe
 const User = require('../models/User');
 const bcrypt = require('bcrypt');
 const HttpError = require('../interface/httpError');
-const generateToken = require('../middleware/generateToken');
+const generateToken = require('../utils/generateToken');
 
 const all = async (req, res, next) => {
     try {
