@@ -7,8 +7,7 @@ const router = express.Router();
 // Create a new user
 router.post('/', userController.create);
 
-// Login endpoint
-router.post('/login', userController.login);
+
 
 // Get all users
 router.get('/', auth, userController.all);
