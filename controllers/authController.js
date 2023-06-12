@@ -14,7 +14,6 @@ const login = async function (req, res, next) {
             password,
             isAdmin,
         } = req.body;
-
         // Check if user exists and password is correct
         const user = await User.findOne({ name: name, email: email });
         const validPassword = await bcrypt.compare(password, user.password);
