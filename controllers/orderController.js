@@ -2,34 +2,58 @@ const { GENERAL_ERROR_CODE } = require("../constant/errorCode");
 const { ERROR_SERVER } = require("../constant/errorHttp");
 const { GENERAL_ERROR_MESSAGE } = require("../constant/errorMessage");
 const Order = require('../models/order');
+const DeliveryAddress = require('../models/deliveryAddress');
+const OrderItem = require('../models/orderItem');
+
 const HttpError = require('../interface/httpError');
 
 const all = async (req, res, next) => {
     try {
-        req.data = await Order.find();
-        ;
+
+        const datas = await Order.find().populate('order_items').sort('-createdAt');
+        req.data = {
+            data: datas.map(data => data.toJSON({ virtuals: true }))
+        };
         next();
     } catch (err) {
         const error = new HttpError(GENERAL_ERROR_MESSAGE, GENERAL_ERROR_CODE, ERROR_SERVER);
-        next(error)
+        next(error);
     }
 }
 
 const create = async (req, res, next) => {
     try {
+        const { delivery_fee, delivery_address, order_items } = req.body;
+        const address = await DeliveryAddress.findById(delivery_address);
 
-        const {
-            delivery_address,
-            delivery_fee,
-            order_items
-        } = req.body;
-        const order = new Order({
-            delivery_address,
-            delivery_fee,
-            order_items
+        const payloadOrder = new Order({
+            _id: new Types.ObjectId(),
+            status: "WAITING",
+            delivery_address: {
+                provinsi: address.provinsi,
+                kabupaten: address.kabupaten,
+                kecamatan: address.kecamatan,
+                kelurahan: address.kelurahan,
+                detail: address.detail
+            },
+            delivery_fee: delivery_fee,
+            user: address.user._id
         });
-        const data = await order.save();
-        req.data = data;
+
+        const order = await payloadOrder.save();
+        const orderItems = await OrderItem.insertMany(order_items.map(item => ({
+            name: item.name,
+            description: item.description,
+            price: parseInt(item.price),
+            qty: parseInt(item.qty),
+            image: item.image,
+            order: order._id
+        })));
+        const orderItemsId = orderItems.map(item => item._id);
+        const newOrder = await Order.findByIdAndUpdate(order._id, { order_items: orderItemsId }, {
+            new: true
+        });
+        req.data = newOrder;
         next();
     } catch (err) {
         const error = new HttpError(GENERAL_ERROR_MESSAGE, GENERAL_ERROR_CODE, ERROR_SERVER);

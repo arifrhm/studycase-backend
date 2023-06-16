@@ -8,7 +8,11 @@ const productSchema = new Schema({
     price: { type: Number, double: true, required: true },
     image: { type: String, required: true },
     category: { type: String, required: true },
-    // tag : tagSchema,
+    tag : {
+        type : Schema.Types.ObjectId,
+        ref : 'Tag',
+        required: true
+    },
 });
 
 module.exports = mongoose.model('product', productSchema);
