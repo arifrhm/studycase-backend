@@ -6,6 +6,7 @@ const DeliveryAddress = require('../models/deliveryAddress');
 const OrderItem = require('../models/orderItem');
 
 const HttpError = require('../interface/httpError');
+const statusPayment = { WAITING: 'WAITING'};
 
 const all = async (req, res, next) => {
     try {
@@ -24,11 +25,9 @@ const all = async (req, res, next) => {
 const create = async (req, res, next) => {
     try {
         const { delivery_fee, delivery_address, order_items } = req.body;
-        const address = await DeliveryAddress.findById(delivery_address);
-
+        const address = await DeliveryAddress.findById(delivery_address.toString());
         const payloadOrder = new Order({
-            _id: new Types.ObjectId(),
-            status: "WAITING",
+            status : statusPayment.WAITING,
             delivery_address: {
                 provinsi: address.provinsi,
                 kabupaten: address.kabupaten,
@@ -39,14 +38,13 @@ const create = async (req, res, next) => {
             delivery_fee: delivery_fee,
             user: address.user._id
         });
-
         const order = await payloadOrder.save();
         const orderItems = await OrderItem.insertMany(order_items.map(item => ({
             name: item.name,
             description: item.description,
             price: parseInt(item.price),
             qty: parseInt(item.qty),
-            image: item.image,
+            imageUrl: item.image,
             order: order._id
         })));
         const orderItemsId = orderItems.map(item => item._id);
