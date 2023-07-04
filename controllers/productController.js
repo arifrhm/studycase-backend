@@ -1,3 +1,4 @@
+const HttpError = require('../interface/httpError');
 const { GENERAL_ERROR_CODE } = require("../constant/errorCode");
 const { ERROR_SERVER } = require("../constant/errorHttp");
 const { GENERAL_ERROR_MESSAGE } = require("../constant/errorMessage");
@@ -16,25 +17,25 @@ const all = async (req, res, next) => {
 
 const create = async (req, res, next) => {
     try {
-
         const { name,
             description,
             price,
             image,
             category,
-            // tag 
+            tag 
         } = req.body;
         const product = new Product({ name,
             description,
             price,
             image,
             category,
-            // tag 
+            tag 
         });
         const data = await product.save();
         req.data = data;
         next();
     } catch (err) {
+        console.log(err)
         const error = new HttpError(GENERAL_ERROR_MESSAGE, GENERAL_ERROR_CODE, ERROR_SERVER);
         next(error)
     }

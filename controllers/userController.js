@@ -22,13 +22,11 @@ const create = async (req, res, next) => {
         const { name,
             email,
             password,
-            isAdmin,
         } = req.body;
         const user = new User({
             name,
             email,
             password,
-            isAdmin,
         });
         const data = await user.save();
         req.data = data;
@@ -55,14 +53,12 @@ const updateByID = async (req, res, next) => {
         const { name,
             email,
             password,
-            isAdmin,
         } = req.body;
         await User.findByIdAndUpdate(req.params.id,
             {
                 name,
                 email,
                 password,
-                isAdmin,
             });
         req.data = await User.findById(req.params.id);
         next();

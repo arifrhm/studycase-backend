@@ -9,7 +9,7 @@ const orderRoutes = require('../routes/order');
 const deliveryAddress = require('../routes/deliveryAddress');
 
 router.use('/tag', tagRoutes);
-router.use('/product', productRoutes);
+router.use('/products', productRoutes);
 router.use('/users', userRoutes);
 router.use('/auth', authRoutes);
 router.use('/order', orderRoutes);

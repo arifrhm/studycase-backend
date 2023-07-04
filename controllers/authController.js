@@ -9,13 +9,12 @@ const { UN_AUTHENTICATED, GENERAL_ERROR_MESSAGE } = require("../constant/errorMe
 //Create genreate token endpoint
 const login = async function (req, res, next) {
     try {
-        const { name,
+        const {
             email,
             password,
-            isAdmin,
         } = req.body;
         // Check if user exists and password is correct
-        const user = await User.findOne({ name: name, email: email });
+        const user = await User.findOne({ email: email });
         const validPassword = await bcrypt.compare(password, user.password);
 
         const errorUnauthenticated = new HttpError(UN_AUTHENTICATED, NOT_AUTHENTICATED_CODE, UNAUTHORIZED);
