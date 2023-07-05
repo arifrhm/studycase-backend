@@ -15,11 +15,11 @@ const storage = multer.diskStorage({
   })
 const upload = multer({ storage });
 
+router.get('/search',productController.searchByQueryParams);
+router.get('/:id',productController.getbyID);
 router.get('/', productController.all);
 router.post('/', upload.single('image'), uploadFileMiddleware.getFileName, productController.create);
-// router.get('/:id',productController.getbyID);
 router.patch('/:id',productController.updateByID);
 router.delete('/:id',productController.deleteByID);
-router.get('/search',productController.searchByQueryParams);
 
 module.exports = router;
