@@ -95,10 +95,10 @@ const searchByQueryParams = async (req, res, next) => {
     try {
         // Perform the search query using Mongoose
         const results = await Product.find({ name: { $regex: query, $options: 'i' } });
-        console.log(`results : ${results}`)
         req.data = results;
         next();
     } catch (err) {
+        console.log(err);
         const error = new HttpError(GENERAL_ERROR_MESSAGE, GENERAL_ERROR_CODE, ERROR_SERVER);
         next(error)
     }
@@ -107,7 +107,7 @@ const searchByQueryParams = async (req, res, next) => {
 module.exports = {
     create,
     all,
-    // getbyID,
+    getbyID,
     updateByID,
     deleteByID,
     searchByQueryParams
