@@ -17,9 +17,9 @@ const upload = multer({ storage });
 
 router.get('/', productController.all);
 router.post('/', upload.single('image'), uploadFileMiddleware.getFileName, productController.create);
-router.get('/:id',productController.getbyID);
+// router.get('/:id',productController.getbyID);
 router.patch('/:id',productController.updateByID);
 router.delete('/:id',productController.deleteByID);
-
+router.get('/search',productController.searchByQueryParams);
 
 module.exports = router;

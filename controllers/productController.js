@@ -22,14 +22,15 @@ const create = async (req, res, next) => {
             price,
             image,
             category,
-            tag 
+            tag
         } = req.body;
-        const product = new Product({ name,
+        const product = new Product({
+            name,
             description,
             price,
             image,
             category,
-            tag 
+            tag
         });
         const data = await product.save();
         req.data = data;
@@ -41,16 +42,16 @@ const create = async (req, res, next) => {
     }
 }
 
-const getbyID = async (req, res, next) => {
-    try {
-        const product = await Product.findById(req.params.id);
-        req.data = product;
-        next();
-    } catch (err) {
-        const error = new HttpError(GENERAL_ERROR_MESSAGE, GENERAL_ERROR_CODE, ERROR_SERVER);
-        next(error)
-    }
-}
+// const getbyID = async (req, res, next) => {
+//     try {
+//         const product = await Product.findById(req.params.id);
+//         req.data = product;
+//         next();
+//     } catch (err) {
+//         const error = new HttpError(GENERAL_ERROR_MESSAGE, GENERAL_ERROR_CODE, ERROR_SERVER);
+//         next(error)
+//     }
+// }
 
 const updateByID = async (req, res, next) => {
     try {
@@ -88,10 +89,26 @@ const deleteByID = async (req, res, next) => {
     }
 }
 
+const searchByQueryParams = async (req, res, next) => {
+    const query = req.query.query;
+    console.log(query);
+    try {
+        // Perform the search query using Mongoose
+        const results = await Product.find({ name: { $regex: query, $options: 'i' } });
+        console.log(`results : ${results}`)
+        req.data = results;
+        next();
+    } catch (err) {
+        const error = new HttpError(GENERAL_ERROR_MESSAGE, GENERAL_ERROR_CODE, ERROR_SERVER);
+        next(error)
+    }
+}
+
 module.exports = {
     create,
     all,
-    getbyID,
+    // getbyID,
     updateByID,
-    deleteByID
+    deleteByID,
+    searchByQueryParams
 }
