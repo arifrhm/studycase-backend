@@ -107,7 +107,7 @@ const searchByQueryParams = async (req, res, next) => {
 module.exports = {
     create,
     all,
-    getbyID,
+    // getbyID,
     updateByID,
     deleteByID,
     searchByQueryParams
