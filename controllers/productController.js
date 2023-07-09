@@ -90,11 +90,13 @@ const deleteByID = async (req, res, next) => {
 }
 
 const searchByQueryParams = async (req, res, next) => {
-    const query = req.query.query;
-    console.log(query);
+    
     try {
+        const query = req.query.query;
+        // Create a regex pattern for the search query
+        const regexPattern = new RegExp(query, 'i');
         // Perform the search query using Mongoose
-        const results = await Product.find({ name: { $regex: query, $options: 'i' } });
+        const results = await Product.find({ name: { $regex: regexPattern } });
         req.data = results;
         next();
     } catch (err) {
