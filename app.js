@@ -1,5 +1,7 @@
 var createError = require('http-errors');
 var express = require('express');
+const cors = require('cors');
+
 const { NOT_FOUND_PATH } = require('./constant/errorCode');
 const { NOT_FOUND, ERROR_SERVER } = require('./constant/errorHttp');
 const { PATH_NOT_FOUND } = require('./constant/errorMessage');
@@ -23,6 +25,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(indexRouter);
+app.use(cors());
 
 app.use(response);
 // error handler
