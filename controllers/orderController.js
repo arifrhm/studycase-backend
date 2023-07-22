@@ -10,7 +10,7 @@ const statusPayment = { WAITING: 'WAITING'};
 
 const all = async (req, res, next) => {
     try {
-
+        
         const datas = await Order.find().populate('order_items').sort('-createdAt');
         req.data = {
             data: datas.map(data => data.toJSON({ virtuals: true }))
@@ -24,36 +24,40 @@ const all = async (req, res, next) => {
 
 const create = async (req, res, next) => {
     try {
-        const { delivery_fee, delivery_address, order_items } = req.body;
-        const address = await DeliveryAddress.findById(delivery_address.toString());
+        const { orderItems, shippingAddress, paymentMethod,itemsPrice,shippingPrice,taxPrice,totalPrice } = req.body;
+        const userID = req.user;
+        console.log(`userID : ${userID}`);
         const payloadOrder = new Order({
             status : statusPayment.WAITING,
             delivery_address: {
-                provinsi: address.provinsi,
-                kabupaten: address.kabupaten,
-                kecamatan: address.kecamatan,
-                kelurahan: address.kelurahan,
-                detail: address.detail
+                full_name : shippingAddress.fullName,
+                province: shippingAddress.province,
+                city: shippingAddress.city,
+                district: shippingAddress.district,
+                detail: shippingAddress.address,
+                postal_code : shippingAddress.postalCode
             },
-            delivery_fee: delivery_fee,
-            user: address.user._id
+            delivery_fee: shippingPrice,
+            user: userID
         });
         const order = await payloadOrder.save();
-        const orderItems = await OrderItem.insertMany(order_items.map(item => ({
+        const orderItemsInsert = await OrderItem.insertMany(orderItems.map(item => ({
             name: item.name,
             description: item.description,
             price: parseInt(item.price),
-            qty: parseInt(item.qty),
+            qty: parseInt(item.quantity),
             imageUrl: item.image,
             order: order._id
         })));
-        const orderItemsId = orderItems.map(item => item._id);
+        const orderItemsId = orderItemsInsert.map(item => item._id);
         const newOrder = await Order.findByIdAndUpdate(order._id, { order_items: orderItemsId }, {
             new: true
         });
         req.data = newOrder;
+
         next();
     } catch (err) {
+        console.log(err);
         const error = new HttpError(GENERAL_ERROR_MESSAGE, GENERAL_ERROR_CODE, ERROR_SERVER);
         next(error)
     }

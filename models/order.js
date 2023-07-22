@@ -9,13 +9,13 @@ const orderSchema = new Schema({
     }
     ,
     delivery_address: {
-        provinsi: { type: String, required: true },
-        kabupaten: { type: String, required: true },
-        kecamatan: { type: String, required: true },
-        kelurahan: { type: String, required: true },
-        detail: { type: String}
+        full_name : { type: String, required: true },
+        province: { type: String, required: true },
+        city: { type: String, required: true },
+        district: { type: String, required: true },
+        detail: { type: String, required: true },
+        postal_code : { type: String, required: true },
     },
-
     delivery_fee: { type: Number, required: true },
     user: {
         type: Schema.Types.ObjectId,

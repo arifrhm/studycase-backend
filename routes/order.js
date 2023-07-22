@@ -5,7 +5,7 @@ const auth = require('../middleware/auth');
 const router = express.Router();
 
 // Create a new user
-router.post('/', orderController.create);
+router.post('/', auth, orderController.create);
 
 // Get all users
 router.get('/', auth, orderController.all);
