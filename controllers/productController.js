@@ -42,16 +42,16 @@ const create = async (req, res, next) => {
     }
 }
 
-// const getbyID = async (req, res, next) => {
-//     try {
-//         const product = await Product.findById(req.params.id);
-//         req.data = product;
-//         next();
-//     } catch (err) {
-//         const error = new HttpError(GENERAL_ERROR_MESSAGE, GENERAL_ERROR_CODE, ERROR_SERVER);
-//         next(error)
-//     }
-// }
+const getbyID = async (req, res, next) => {
+    try {
+        const product = await Product.findById(req.params.id);
+        req.data = product;
+        next();
+    } catch (err) {
+        const error = new HttpError(GENERAL_ERROR_MESSAGE, GENERAL_ERROR_CODE, ERROR_SERVER);
+        next(error)
+    }
+}
 
 const updateByID = async (req, res, next) => {
     try {
@@ -109,7 +109,7 @@ const searchByQueryParams = async (req, res, next) => {
 module.exports = {
     create,
     all,
-    // getbyID,
+    getbyID,
     updateByID,
     deleteByID,
     searchByQueryParams

@@ -10,8 +10,7 @@ const productSchema = new Schema({
     category: { type: String, required: true },
     tag : {
         type : Schema.Types.ObjectId,
-        ref : 'Tag',
-        required: true
+        ref : 'Tag'
     },
 });
 
